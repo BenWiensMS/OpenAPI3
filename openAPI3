@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  version: '1'
+  title: demo - modell api
+  description: demo - modell api
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/BenjaminWiens/modelle/1
+paths:
+  /modelle/:
+    post:
+      tags:
+        - Modelle
+      summary: Legt ein Modell an.
+      description: |
+        Legt ein neues **Modell** an.
+        |A|B|C|
+        |---|---|---|
+        |1|2|3|
+      requestBody:
+        $ref: '#/components/requestBodies/Modell'
+      responses:
+        201:
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+      security: 
+        - prod: []
+    get:
+      tags: 
+        - Modelle
+      summary: Liste der Modelle
+      parameters: 
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModellItem'
+  /modelle/{mid}:
+    parameters:
+      - $ref: '#/components/parameters/Mid'
+    get:
+      tags: 
+        - Modelle
+      summary: Liefert ein Modell
+      responses:
+        200:
+          $ref: '#/components/responses/Modell'
+    put:
+      tags:
+       - Modelle
+      summary: Ändert ein Modell
+      requestBody:
+        $ref: '#/components/requestBodies/Modell'
+      responses:
+        200:
+          $ref: '#/components/responses/Modell'
+    delete:
+      tags: 
+       - Modelle
+      summary: Löscht ein Modell
+      responses:
+        200:
+          description: Ok
+  /werke/{wid}:
+    parameters:
+      - $ref: '#/components/parameters/Wid'
+    get:
+      tags: 
+       - Werk    
+      operationId: getWerk
+      responses:
+        200:
+          description: Ok
+          $ref: '#/components/responses/Werk'
+components:
+  parameters:
+    Mid:
+      name: mid
+      in: path
+      required: true
+      schema: 
+        type: integer
+      description: Id des Modells
+    Wid:
+      name: wid
+      in: path
+      required: true
+      schema:
+        type: integer
+        description: Id eines Werks
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+  requestBodies:
+    Modell:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Modell'
+  responses:
+    Modell:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Modell'
+      links:
+        Werk:
+          operationId: getWerk
+          parameters:
+            wid: $response.body#/werk
+    Werk:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Werk'
+  headers:
+    Location:
+      description: URI der neu erzeugten Ressource
+      schema:
+        type: string
+        format: uri
+  schemas:
+    Modell:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 47110815
+        name:
+          type: string
+          maxLength: 20
+          example: Model 3
+        werk:
+          type: integer
+          example: 42
+    ModellItem:
+      type: object
+      properties:
+        name:
+          type: string
+        self_uri:
+          type: string
+          format: uri
+      example: 
+        name: ID.3
+        self_uri: /modelle/67
+    Werk:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123456789
+        name:
+          type: string
+          maxLength: 25
+          example: TestWerk
+  securitySchemes:
+    prod:
+      scheme: bearer
+      type: http
+      bearerFormat: jwt
+    
